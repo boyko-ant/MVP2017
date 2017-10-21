@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" type="text/css" href="./bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+
+    <script src="./bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="./bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="./bower_components/knockout/dist/knockout.js"></script>
+</head>
+<body>
+
+<div class="container" data-bind="visible: page() == 1" style="display: none;">
+    <h1>Which MVP are You?</h1>
+    <input id="fileUpload" type="file" class="form-control" placeholder="your photo" style="margin-top: 25px;" />
+    <button data-bind="click: uploadPhoto" class="btn btn-success" style="margin-top: 10px;">
+        <span class="glyphicon glyphicon-open" aria-hidden="true"></span>
+        upload photo
+    </button>
+</div>
+
+<div class="container" data-bind="visible: page() >= 2" style="display: none;">
+    <h2>preparing to upload...</h2>
+</div>
+
+
+<div class="container" data-bind="visible: page() >= 3" style="display: none;">
+    <h2>uploading photo...</h2>
+</div>
+
+<div class="container" data-bind="visible: page() >= 4" style="display: none;">
+    <h2>checking face api...</h2>
+</div>
+
+<div class="container" data-bind="visible: page() == 5" style="display: none;">
+
+</div>
+
+<script>
+    (function () {
+        function imageUpload(input, uploadUrl, callback) {
+            var xhr = new XMLHttpRequest();
+            xhr.upload.addEventListener("progress", uploadProgress, false);
+            xhr.addEventListener("load", uploadComplete, false);
+            xhr.addEventListener("error", uploadFailed, false);
+            xhr.addEventListener("abort", uploadCanceled, false);
+            xhr.open("PUT", uploadUrl);
+            xhr.setRequestHeader('x-ms-date', new Date());
+            xhr.setRequestHeader('x-ms-version', '2015-12-11');
+            xhr.setRequestHeader('Content-Type', 'image');
+            xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
+
+            if (typeof(input) == 'string') {
+                xhr.send(document.getElementById(input).files[0]);
+            } else {
+                xhr.send(input.files[0]);
+            }
+
+            function uploadProgress(e) {
+            }
+
+            function uploadComplete(e) {
+                callback(e);
+            }
+
+            function uploadFailed(e) {
+                callback(e);
+            }
+
+            function uploadCanceled(e) {
+                callback(e);
+            }
+        }
+
+        function getNewUploadUrl(callback) {
+            $.ajax('...', {
+                method: 'GET',
+                complete: function (response) {
+                    callback(response.responseText);
+                }
+            });
+        }
+
+
+
+        var vm = {
+            page: ko.observable(1)
+        };
+
+        vm.uploadPhoto = function() {
+            vm.page(2); // preparing to upload
+
+            getNewUploadUrl(function (uploadUrl) {
+                vm.page(3); // uploading photo
+
+                imageUpload('fileUpload', uploadUrl, function() {
+                    vm.page(4); // checking face api
+
+
+                });
+            });
+        };
+
+        ko.applyBindings(vm);
+    })();
+</script>
+</body>
+</html>
