@@ -120,6 +120,7 @@ fi
 # 4. Install bower packages
 if [ -e "$DEPLOYMENT_TARGET/bower.json" ]; then
   cd "$DEPLOYMENT_TARGET"
+  eval $NPM_CMD install bower --global
   eval bower install
   exitWithMessageOnError "bower failed"
   cd - > /dev/null
