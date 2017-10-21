@@ -36,8 +36,8 @@
     <h2>checking face api...</h2>
 </div>
 
-<div class="container" data-bind="visible: page() == 5" style="display: none;">
-
+<div class="container" data-bind="visible: page() == -5" style="display: none;">
+    <h1>we are so happy to have you here</h1>
 </div>
 
 <script>
@@ -91,18 +91,31 @@
             page: ko.observable(1)
         };
 
-        vm.uploadPhoto = function() {
+//        vm.uploadPhoto = function() {
+//            vm.page(2); // preparing to upload
+//
+//            getNewUploadUrl(function (uploadUrl) {
+//                vm.page(3); // uploading photo
+//
+//                imageUpload('fileUpload', uploadUrl, function() {
+//                    vm.page(4); // checking face api
+//
+//
+//                });
+//            });
+//        };
+
+        vm.uploadPhoto = function () {
             vm.page(2); // preparing to upload
-
-            getNewUploadUrl(function (uploadUrl) {
+            setTimeout(function () {
                 vm.page(3); // uploading photo
-
-                imageUpload('fileUpload', uploadUrl, function() {
+                setTimeout(function () {
                     vm.page(4); // checking face api
-
-
-                });
-            });
+                    setTimeout(function () {
+                        vm.page(-5);
+                    }, 2000);
+                }, 2000);
+            }, 1000);
         };
 
         ko.applyBindings(vm);
